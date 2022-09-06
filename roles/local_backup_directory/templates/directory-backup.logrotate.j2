@@ -1,0 +1,11 @@
+{{ backup_dir }}/*-directory-{{ directory.split("/")[-1] }}.tar.gz {
+    rotate {{ backups_to_keep }}
+    missingok
+    nocompress
+    nocopy
+    dateyesterday
+    dateext
+    dateformat -%Y%m%d-%H%M
+    extension .tar.gz
+    sharedscripts
+}

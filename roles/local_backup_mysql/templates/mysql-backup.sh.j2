@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export TZ=UTC
+
+BACKUP_FILE="{{ backup_dir }}/{{ inventory_hostname_short }}-mysql-{{ database }}.sql"
+
+/usr/sbin/logrotate --force /etc/logrotate.d/mysql-backups
+/usr/bin/mysqldump {{ database }} --single-transaction > $BACKUP_FILE
+chown mysql:backup $BACKUP_FILE
+if [[ -x /usr/bin/gzip ]]; then
+    /usr/bin/gzip $BACKUP_FILE
+elif [[ -x /bin/gzip ]]; then
+    /bin/gzip $BACKUP_FILE
+else
+    echo "ERROR: Unable to find gzip"
+    exit 1
+fi

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+BACKUP_FILE="{{ backup_dir }}/{{ inventory_hostname_short }}-directory-{{ directory.split("/")[-1] }}.tar.gz"
+
+/usr/sbin/logrotate --force /etc/logrotate.d/{{ directory.split("/")[-1] }}-directory-backup
+tar{{ excludes | default([]) | map('regex_replace', '^(.*)$', " --exclude='\\1'") | join(" ") }} -zcf $BACKUP_FILE -C {{ directory }} .
+chgrp backup $BACKUP_FILE

@@ -1,0 +1,53 @@
+# code: language=ansible
+---
+- name: Install packages for MySQL backups
+  apt:
+    state: present
+    name:
+      - logrotate
+  tags:
+    - backup
+- name: Make sure backup directory exists
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - backup
+- name: Cleanup from single db backup version
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/cron.d/mysql-backup
+    - /usr/local/bin/mysql-backup.sh
+    - /etc/logrotate.d/mysql-backups
+- name: Install mysql-{{ database }}-backup.sh
+  template:
+    src: templates/mysql-backup.sh.j2
+    dest: /usr/local/bin/mysql-{{ database }}-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - backup
+- name: Install logrotate config
+  template:
+    src: templates/mysql-backups.logrotate.j2
+    dest: /etc/logrotate.d/mysql-{{ database }}-backup
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - backup
+- name: Install backup cron file
+  template:
+    src: templates/mysql-backup.cron.j2
+    dest: /etc/cron.d/mysql-{{ database }}-backup
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - backup

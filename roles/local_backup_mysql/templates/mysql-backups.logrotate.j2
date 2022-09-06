@@ -1,0 +1,11 @@
+{{ backup_dir }}/{{ inventory_hostname_short }}-mysql-{{ database }}.sql.gz {
+    rotate {{ backups_to_keep }}
+    missingok
+    nocompress
+    nocopy
+    dateyesterday
+    dateext
+    dateformat -%Y%m%d-%H%M
+    extension .sql.gz
+    sharedscripts
+}
