@@ -4,7 +4,7 @@ export TZ=UTC
 
 BACKUP_FILE="{{ backup_dir }}/{{ inventory_hostname_short }}-mysql-{{ database }}.sql"
 
-/usr/sbin/logrotate --force /etc/logrotate.d/mysql-backups
+/usr/sbin/logrotate --force /etc/logrotate.d/mysql-{{ database }}-backup
 /usr/bin/mysqldump {{ database }} --single-transaction > $BACKUP_FILE
 chown mysql:backup $BACKUP_FILE
 if [[ -x /usr/bin/gzip ]]; then
